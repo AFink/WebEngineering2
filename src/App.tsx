@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { App, BlockTitle, Link, Navbar, Page, Panel, View } from 'framework7-react';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function Main() {
+    return (
+        <App theme="auto" name="Navigation PWA">
+            <Panel left cover dark visibleBreakpoint={960}>
+                <View>
+                    <Page>
+                        <Navbar title="Navigation" />
+                        <BlockTitle style={{ marginBottom: "0.2rem", marginTop: "1rem" }}>Start</BlockTitle>
+                        <BlockTitle style={{ marginBottom: "0.2rem", marginTop: "1rem" }}>Destination</BlockTitle>
+                    </Page>
+                </View>
+            </Panel>
+            <View main dark
+                className='main-view'>
+                <Navbar title="Navigation" className='hide-desktop'>
+                    <Link slot="nav-left" iconF7="bars" panelOpen="left"></Link>
+                </Navbar>
+                <Page>
+                    My main view content
+                </Page>
+            </View>
+        </App>
+    );
 }
 
-export default App
+export default Main;
+
