@@ -1,4 +1,5 @@
 import { App, BlockTitle, Link, Navbar, Page, Panel, View } from 'framework7-react';
+import LocationMap from './components/Map';
 
 function Main() {
     return (
@@ -18,7 +19,7 @@ function Main() {
                     <Link slot="nav-left" iconF7="bars" panelOpen="left"></Link>
                 </Navbar>
                 <Page>
-                    My main view content
+                    <LocationMap />
                 </Page>
             </View>
         </App>
