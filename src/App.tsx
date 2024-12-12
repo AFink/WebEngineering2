@@ -3,7 +3,7 @@ import {
     useState,
 } from 'react';
 
-import SearchLocation from './components/SearchLocation';
+import SearchLocation, { ReverseLocation } from './components/SearchLocation';
 import { App, BlockTitle, Link, Navbar, Page, Panel, View } from 'framework7-react';
 import { LatLng } from 'leaflet';
 import LocationMap from './components/Map';
@@ -13,7 +13,10 @@ function Main() {
     const [currentLocation, setCurrentLocation] = useState<LatLng>(new LatLng(53.5412, 9.984));
 
     const [startingLocation, setStartingLocation] = useState<LatLng>(currentLocation);
+    const [startingLocationReversed, setStartingLocationReversed] = useState<ReverseLocation | null>(null);
+
     const [searchingLocation, setSearchingLocation] = useState<LatLng | null>(null);
+    const [searchingLocationReversed, setSearchingLocationReversed] = useState<ReverseLocation | null>(null);
 
     // fetch current location and set as current and starting location
     useEffect(() => {
@@ -35,9 +38,9 @@ function Main() {
                     <Page>
                         <Navbar title="Navigation" />
                         <BlockTitle style={{ marginBottom: "0.2rem", marginTop: "1rem" }}>Start</BlockTitle>
-                        <SearchLocation location={startingLocation} setLocation={setStartingLocation} />
+                        <SearchLocation locationReverse={startingLocationReversed} location={startingLocation} setLocation={setStartingLocation} setLocationReversed={setStartingLocationReversed} />
                         <BlockTitle style={{ marginBottom: "0.2rem", marginTop: "1rem" }}>Destination</BlockTitle>
-                        <SearchLocation location={searchingLocation} setLocation={setSearchingLocation} />
+                        <SearchLocation locationReverse={searchingLocationReversed} location={searchingLocation} setLocation={setSearchingLocation} setLocationReversed={setSearchingLocationReversed} />
                     </Page>
                 </View>
             </Panel>
