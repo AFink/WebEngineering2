@@ -1,5 +1,5 @@
 import 'leaflet/dist/leaflet.css';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import L, { LatLng, Map, Routing } from 'leaflet';
 import 'leaflet-routing-machine';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
@@ -8,8 +8,11 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import { LayersControl, MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
 
 import "leaflet-routing-machine";
-import { MapContext } from './Provider';
+import RoutingControl from "./RoutingControl";
 import { Context } from './context';
+import { MapContext } from './Provider';
+import { ReverseLocation } from './SearchLocation';
+
 
 L.Marker.prototype.options.icon = L.icon({
     iconUrl,
@@ -22,13 +25,21 @@ L.Marker.prototype.options.icon = L.icon({
 const DEFAULT_ZOOM = 16;
 
 type LocationMapProps = {
+    startingLocation: LatLng;
+    startingLocationReversed: ReverseLocation | null;
+    searchingLocation: LatLng | null;
+    searchingLocationReversed: ReverseLocation | null;
+    setSearchingLocation: (location: LatLng) => void;
+    setStartingLocation: (location: LatLng) => void;
+    setRoutes: (routes: Routing.IRoute[] | null) => void;
 };
 
-const LocationMap: React.FC<LocationMapProps> = () => {
+const LocationMap: React.FC<LocationMapProps> = ({ startingLocation, startingLocationReversed, searchingLocation, searchingLocationReversed, setSearchingLocation, setStartingLocation, setRoutes }) => {
     const context = useContext(Context) as MapContext;
     const { setMap, setRouter } = context || {};
     const mapRef = useRef<Map>(null);
     const routingRef = useRef<Routing.Control>();
+    const [routes, setRoutesData] = useState<Routing.IRoute[] | null>(null);
 
     // Set router instance in context
     useEffect(() => {
@@ -36,7 +47,22 @@ const LocationMap: React.FC<LocationMapProps> = () => {
             // @ts-expect-error context prop
             setRouter(routingRef.current);
         }
-    }, [routingRef, setRouter]);
+    }, [routingRef, setRouter, startingLocation, searchingLocation]);
+
+    // Update waypoints when locations change
+    useEffect(() => {
+        const waypoints = [startingLocation];
+
+        if (searchingLocation) {
+            waypoints.push(searchingLocation);
+        }
+
+        if (routingRef.current) {
+            routingRef.current.setWaypoints(waypoints);
+            setRoutes(null);
+            setRoutesData(null);
+        }
+    }, [startingLocation, searchingLocation, setRoutes, setRoutesData]);
 
     // Set map instance in context
     useEffect(() => {
@@ -46,10 +72,45 @@ const LocationMap: React.FC<LocationMapProps> = () => {
         if (setMap) setMap(map);
     }, [mapRef, setMap]);
 
+    // Fit markers and route into map bounds
+    useEffect(() => {
+        const locations: LatLng[] = [];
+
+        // Add starting location into locations
+        if (startingLocation) {
+            locations.push(startingLocation);
+        }
+
+        // Add searching location into locations
+        if (searchingLocation) {
+            locations.push(searchingLocation);
+        }
+
+        // Add route into locations
+        if (routingRef.current) {
+            const fixedRoutingRef = routingRef.current as unknown as Routing.Control & { _selectedRoute: Routing.IRoute };
+            if (fixedRoutingRef._selectedRoute) {
+                const coordinates = fixedRoutingRef._selectedRoute?.coordinates;
+                coordinates?.forEach((coordinate) => {
+                    locations.push(coordinate);
+                });
+            }
+        }
+
+        // Fit map to bounds
+        if (mapRef.current) {
+            const map = mapRef.current;
+            const bounds = L.latLngBounds(locations);
+            map.fitBounds(bounds, { paddingTopLeft: [70, 30], paddingBottomRight: [50, 30], maxZoom: DEFAULT_ZOOM });
+        }
+    }, [searchingLocation, startingLocation, routes, mapRef]);
+
     return (
         <div className='map-container'>
             {/* @ts-expect-error internal prop */}
-            <MapContainer center={new LatLng(52.4, 10.2)} whenReady={(mapInstance) => { mapRef.current = mapInstance.target }} zoomControl={false} zoom={DEFAULT_ZOOM} style={{ height: "100%", width: "100%" }}>
+            <MapContainer whenReady={(mapInstance) => { mapRef.current = mapInstance.target }} zoomControl={false} center={startingLocation} zoom={DEFAULT_ZOOM} style={{ height: "100%", width: "100%" }}>
+                {/* @ts-expect-error custom prop */}
+                {searchingLocation && <RoutingControl ref={routingRef as unknown as React.LegacyRef<Routing.Control>} setRoutes={(routes) => { setRoutes(routes); setRoutes(routes); }} position={"topleft"} start={startingLocation} end={searchingLocation} color={"#757de8"} />}
                 <LayersControl position="bottomright">
                     <LayersControl.BaseLayer checked name="OpenStreetMap Standard">
                         <TileLayer

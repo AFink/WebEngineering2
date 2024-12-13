@@ -3,12 +3,14 @@ import {
     useState,
 } from 'react';
 
+import Map from './components/Map';
 import SearchLocation, { ReverseLocation } from './components/SearchLocation';
 import { App, BlockTitle, Link, Navbar, Page, Panel, View } from 'framework7-react';
-import { LatLng } from 'leaflet';
-import LocationMap from './components/Map';
+import { LatLng, Routing } from 'leaflet';
 
 function Main() {
+    const [routes, setRoutes] = useState<Routing.IRoute[] | null>(null);
+
     // use Elbphilharmonie as default location
     const [currentLocation, setCurrentLocation] = useState<LatLng>(new LatLng(53.5412, 9.984));
 
@@ -50,7 +52,7 @@ function Main() {
                     <Link slot="nav-left" iconF7="bars" panelOpen="left"></Link>
                 </Navbar>
                 <Page>
-                    <LocationMap />
+                    <Map setRoutes={setRoutes} setSearchingLocation={setSearchingLocation} setStartingLocation={setStartingLocation} startingLocation={startingLocation} startingLocationReversed={startingLocationReversed} searchingLocation={searchingLocation} searchingLocationReversed={searchingLocationReversed} />
                 </Page>
             </View>
         </App>
