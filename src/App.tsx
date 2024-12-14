@@ -7,6 +7,7 @@ import Map from './components/Map';
 import SearchLocation, { ReverseLocation } from './components/SearchLocation';
 import { App, BlockTitle, Link, Navbar, Page, Panel, View } from 'framework7-react';
 import { LatLng, Routing } from 'leaflet';
+import RouteInstructions from './components/RouteInstructions';
 
 function Main() {
     const [routes, setRoutes] = useState<Routing.IRoute[] | null>(null);
@@ -43,6 +44,7 @@ function Main() {
                         <SearchLocation locationReverse={startingLocationReversed} location={startingLocation} setLocation={setStartingLocation} setLocationReversed={setStartingLocationReversed} />
                         <BlockTitle style={{ marginBottom: "0.2rem", marginTop: "1rem" }}>Destination</BlockTitle>
                         <SearchLocation locationReverse={searchingLocationReversed} location={searchingLocation} setLocation={setSearchingLocation} setLocationReversed={setSearchingLocationReversed} />
+                        {routes && <RouteInstructions routes={routes} />}
                     </Page>
                 </View>
             </Panel>
