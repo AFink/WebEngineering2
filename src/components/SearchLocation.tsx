@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { forwardGeocode, ForwardGeocodeResult } from '../logic/forwardGeocode';
 import { List, ListInput, Card, CardContent } from 'framework7-react';
+import { WikipediaResult, wikipediaSearch } from '../logic/wikipediaSearch';
 import { reverseGeocode, ReverseGeocodeResult } from '../logic/reverseGeocoding';
 import { reverseGeocodeToCity } from '../logic/format';
 import { LatLng } from 'leaflet';
 
-export type ReverseLocation = ReverseGeocodeResult;
+export type ReverseLocation = ReverseGeocodeResult & {
+    wiki?: WikipediaResult[];
+};
 
 type SearchLocationProps = {
     setLocation: (location: LatLng) => void;
@@ -13,6 +16,7 @@ type SearchLocationProps = {
     location: LatLng | null;
     locationReverse: ReverseGeocodeResult | null;
     debounceDelay?: number;
+    userLanguage: string;
 }
 
 function placeholderFormat(location: LatLng | null, locationReverse?: ReverseLocation | null): string {
@@ -40,7 +44,7 @@ function placeholderFormat(location: LatLng | null, locationReverse?: ReverseLoc
     }
 }
 
-const SearchLocation: React.FC<SearchLocationProps> = ({ locationReverse, location, setLocation, setLocationReversed, debounceDelay = 500 }) => {
+const SearchLocation: React.FC<SearchLocationProps> = ({ userLanguage, locationReverse, location, setLocation, setLocationReversed, debounceDelay = 500 }) => {
     const [query, setQuery] = useState<string>("");
     const [suggestions, setSuggestions] = useState<ForwardGeocodeResult[]>([]);
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -59,8 +63,14 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ locationReverse, locati
                 if (location !== usedLocation) return;
 
                 if (res) {
+                    const wiki = await wikipediaSearch(reverseGeocodeToCity(res), userLanguage);
+
+                    // when location has changed while fetching, don't update the state
+                    if (location !== usedLocation) return;
+
                     setLocationReversed({
                         ...res,
+                        wiki,
                     });
                 } else {
                     setLocationReversed(null);
@@ -71,7 +81,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ locationReverse, locati
             }
         }
         fetchData();
-    }, [location, setLocationReversed]);
+    }, [location, setLocationReversed, userLanguage]);
 
 
     // Fetch location suggestions with debounce
