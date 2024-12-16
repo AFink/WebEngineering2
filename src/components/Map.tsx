@@ -10,6 +10,7 @@ import { LayersControl, MapContainer, TileLayer, ZoomControl } from 'react-leafl
 import "leaflet-routing-machine";
 import RoutingControl from "./RoutingControl";
 import { Context } from './context';
+import { DraggableMarker } from './Marker';
 import { MapContext } from './Provider';
 import { ReverseLocation } from './SearchLocation';
 
@@ -132,6 +133,13 @@ const LocationMap: React.FC<LocationMapProps> = ({ startingLocation, startingLoc
                             attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
                         />
                     </LayersControl.BaseLayer>
+
+                    {startingLocation && (
+                        <DraggableMarker location={startingLocation} locationReversed={startingLocationReversed} setLocation={setStartingLocation} />
+                    )}
+                    {searchingLocation && (
+                        <DraggableMarker location={searchingLocation} locationReversed={searchingLocationReversed} setLocation={setSearchingLocation} />
+                    )}
                 </LayersControl>
                 <ZoomControl position="bottomright" />
             </MapContainer>
