@@ -9,10 +9,20 @@ import 'framework7-icons';
 import 'framework7/css/bundle';
 import App from "./App";
 import Provider from './components/Provider';
+import { registerSW } from "virtual:pwa-register";
 
 // eslint-disable-next-line react-hooks/rules-of-hooks
 Framework7.use(Framework7React);
 
+
+// add this to prompt for a refresh
+const updateSW = registerSW({
+    onNeedRefresh() {
+        if (confirm("New content available. Reload?")) {
+            updateSW(true);
+        }
+    },
+});
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
