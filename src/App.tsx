@@ -7,6 +7,7 @@ import Map from './components/Map';
 import SearchLocation, { ReverseLocation } from './components/SearchLocation';
 import RouteInstructions from './components/RouteInstructions';
 import { App, BlockTitle, Link, Navbar, Page, Panel, View } from 'framework7-react';
+import NetworkStatusPopup from './components/Offline';
 import { LatLng, Routing } from 'leaflet';
 
 function Main() {
@@ -46,6 +47,7 @@ function Main() {
 
     return (
         <App theme="auto" name="Navigation PWA">
+            <NetworkStatusPopup />
             <Panel left cover dark visibleBreakpoint={960}>
                 <View>
                     <Page>
