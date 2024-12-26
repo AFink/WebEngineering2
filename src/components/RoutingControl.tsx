@@ -22,6 +22,7 @@ const createRoutineMachineLayer = ({ position, start, end, color, setRoutes }: R
         routeWhileDragging: true,
         reverseWaypoints: true,
         fitSelectedRoutes: true,
+        addWaypoints: false,
         lineOptions: {
             styles: [
                 {
@@ -39,7 +40,6 @@ const createRoutineMachineLayer = ({ position, start, end, color, setRoutes }: R
 
     instance.on("routesfound", (e: { routes: L.Routing.IRoute[] }) => {
         setRoutes(e.routes);
-        console.log("Routes found:", e);
     });
 
     return instance;

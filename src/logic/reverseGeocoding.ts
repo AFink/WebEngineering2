@@ -24,10 +24,10 @@ export type ReverseGeocodeResult = {
 }
 
 
-export async function reverseGeocode(pos: LatLng): Promise<ReverseGeocodeResult> {
+export async function reverseGeocode(pos: LatLng, language = 'de'): Promise<ReverseGeocodeResult> {
     try {
         const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${pos.lat}&lon=${pos.lng}&format=json`
+            `https://nominatim.openstreetmap.org/reverse?lat=${pos.lat}&lon=${pos.lng}&accept-language=${language}&format=json`
         );
         const data = await response.json();
 

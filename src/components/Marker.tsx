@@ -39,7 +39,7 @@ export function DraggableMarker({ location, setLocation, locationReversed }: Dra
                         <h1>{reverseGeocodeToCity(locationReversed)}</h1>
                         <p>{locationReversed.address.road}{locationReversed.address.house_number ? ` ${locationReversed.address.house_number}` : ''}, {locationReversed.address.postcode} {reverseGeocodeToCity(locationReversed)}, {locationReversed.address.country}</p>
                         {locationReversed.wiki && (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div className="flex column gap-1">
                                 {locationReversed.wiki.map((result: WikipediaResult, i: number) => (
                                     <div key={i}>
                                         <a className="link external" href={result.url} target="_blank" rel="noreferrer">{result.title}</a>

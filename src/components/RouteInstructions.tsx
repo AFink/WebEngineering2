@@ -72,25 +72,29 @@ function RouteInstructions({ routes }: RouteInstructionsProps) {
 
     return (
         <div>
-            <Toolbar top tabbar style={{ top: 0, marginTop: "1rem" }}>
+            <Toolbar top tabbar className='top-0 mt-1'>
                 {routes.map((_route: Routing.IRoute, routeIndex: number) => (
                     <Link key={routeIndex} tabLink={`#tab-${routeIndex + 1}`} tabLinkActive={routeIndex == selectedRouteIndex}
                         onClick={(e) => selectRoute(e, routeIndex)}
-                    >Route {routeIndex}</Link>
+                    >Route {routeIndex + 1}</Link>
                 ))}
             </Toolbar>
             <Tabs>
                 {routes.map((route: Routing.IRoute, routeIndex: number) => (
-                    <Tab key={routeIndex} id="tab-1" className="page-content" tabActive={routeIndex == selectedRouteIndex} style={{ paddingTop: 0 }}>
+                    <Tab key={routeIndex} id="tab-1" className="page-content pt-0" tabActive={routeIndex == selectedRouteIndex} >
                         <Card key={routeIndex} className="route-card">
                             <CardHeader className="route-header">
-                                Route {routeIndex + 1} (via {route.name})
+                                <div className="div">
+                                    <span className="route-title">Route {routeIndex + 1}</span>
+                                    <div>
+                                        <Badge color="blue">{formatDistance(route.summary?.totalDistance)}</Badge> &nbsp;
+                                        <Badge color="green">{formatTime(route.summary?.totalTime)}</Badge>
+
+                                    </div>
+                                </div>
                             </CardHeader>
                             <CardContent>
-                                <p>
-                                    <Badge color="blue">{formatDistance(route.summary?.totalDistance)}</Badge> &nbsp;
-                                    <Badge color="green">{formatTime(route.summary?.totalTime)}</Badge>
-                                </p>
+
                                 <List>
                                     {route.instructions?.map((instruction, instructionIndex) => (
                                         <ListItem

@@ -39,7 +39,7 @@ const LocationMap: React.FC<LocationMapProps> = ({ startingLocation, startingLoc
     const context = useContext(Context) as MapContext;
     const { setMap, setRouter } = context || {};
     const mapRef = useRef<Map>(null);
-    const routingRef = useRef<Routing.Control>();
+    const routingRef = useRef<Routing.Control>(null);
     const [routes, setRoutesData] = useState<Routing.IRoute[] | null>(null);
 
     // Set router instance in context
@@ -109,7 +109,7 @@ const LocationMap: React.FC<LocationMapProps> = ({ startingLocation, startingLoc
     return (
         <div className='map-container'>
             {/* @ts-expect-error internal prop */}
-            <MapContainer whenReady={(mapInstance) => { mapRef.current = mapInstance.target }} zoomControl={false} center={startingLocation} zoom={DEFAULT_ZOOM} style={{ height: "100%", width: "100%" }}>
+            <MapContainer whenReady={(mapInstance) => { mapRef.current = mapInstance.target }} zoomControl={false} center={startingLocation} zoom={DEFAULT_ZOOM} className='w-100 h-100'>
                 {/* @ts-expect-error custom prop */}
                 {searchingLocation && <RoutingControl ref={routingRef as unknown as React.LegacyRef<Routing.Control>} setRoutes={(routes) => { setRoutes(routes); setRoutes(routes); }} position={"topleft"} start={startingLocation} end={searchingLocation} color={"#757de8"} />}
                 <LayersControl position="bottomright">

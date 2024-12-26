@@ -42,7 +42,7 @@ const NetworkStatusPopup = () => {
                             <li>Geocoding searches</li>
                         </ul>
                         <p>may not work until you are back online.</p></>)}
-                    <Button fill popupClose style={{ marginTop: 'auto' }}>
+                    <Button fill popupClose className='mt-auto'>
                         Close
                     </Button>
                 </Block>

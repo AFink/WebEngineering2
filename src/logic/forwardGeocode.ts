@@ -49,10 +49,10 @@ export type ForwardGeocodeResult = {
 
 
 // logic/forwardGeocode.ts
-export async function forwardGeocode(query: string): Promise<ForwardGeocodeResult[] | null> {
+export async function forwardGeocode(query: string, language = 'de'): Promise<ForwardGeocodeResult[] | null> {
     try {
         const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`
+            `https://nominatim.openstreetmap.org/search?format=json&accept-language=${language}&q=${encodeURIComponent(query)}`
         );
         const data = await response.json() as ForwardGeocodeRawResult[];
 

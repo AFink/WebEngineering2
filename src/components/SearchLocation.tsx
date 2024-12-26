@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { forwardGeocode, ForwardGeocodeResult } from '../logic/forwardGeocode';
-import { List, ListInput, Card, CardContent } from 'framework7-react';
+import { List, ListInput, Card, CardContent, BlockTitle } from 'framework7-react';
 import { WikipediaResult, wikipediaSearch } from '../logic/wikipediaSearch';
 import { reverseGeocode, ReverseGeocodeResult } from '../logic/reverseGeocoding';
 import { reverseGeocodeToCity } from '../logic/format';
@@ -13,6 +13,8 @@ export type ReverseLocation = ReverseGeocodeResult & {
 type SearchLocationProps = {
     setLocation: (location: LatLng) => void;
     setLocationReversed: (location: ReverseLocation | null) => void;
+    title: string;
+    defaultLocation?: LatLng | null;
     location: LatLng | null;
     locationReverse: ReverseGeocodeResult | null;
     debounceDelay?: number;
@@ -44,7 +46,7 @@ function placeholderFormat(location: LatLng | null, locationReverse?: ReverseLoc
     }
 }
 
-const SearchLocation: React.FC<SearchLocationProps> = ({ userLanguage, locationReverse, location, setLocation, setLocationReversed, debounceDelay = 500 }) => {
+const SearchLocation: React.FC<SearchLocationProps> = ({ title, userLanguage, locationReverse, defaultLocation, location, setLocation, setLocationReversed, debounceDelay = 500 }) => {
     const [query, setQuery] = useState<string>("");
     const [suggestions, setSuggestions] = useState<ForwardGeocodeResult[]>([]);
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -57,7 +59,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ userLanguage, locationR
                 const usedLocation = location;
 
                 setLocationReversed(null);
-                const res = await reverseGeocode(location);
+                const res = await reverseGeocode(location, userLanguage);
 
                 // when location has changed while fetching, don't update the state
                 if (location !== usedLocation) return;
@@ -92,7 +94,7 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ userLanguage, locationR
             }
 
             const timeoutId = setTimeout(async () => {
-                const results = await forwardGeocode(query);
+                const results = await forwardGeocode(query, userLanguage);
                 setSuggestions(results || []);
             }, debounceDelay);
 
@@ -110,8 +112,14 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ userLanguage, locationR
     };
 
     return (
-        <div style={{ position: "relative", width: "100%" }}>
-            <List style={{ margin: 0 }}>
+        <div className='relative w-100'>
+            <BlockTitle>{title}
+                {defaultLocation && (
+                    <a className='small' onClick={() => setLocation(defaultLocation)}> (Set to current location)</a>
+                )}
+            </BlockTitle>
+
+            <List className='m-0'>
                 <ListInput
                     type="text"
                     value={query}
@@ -121,44 +129,27 @@ const SearchLocation: React.FC<SearchLocationProps> = ({ userLanguage, locationR
                 />
             </List>
 
-            {suggestions.length > 0 && (
-                <Card
-                    className="dropdown-card"
-                    style={{
-                        position: "absolute",
-                        top: "100%",
-                        left: 0,
-                        width: "100%",
-                        zIndex: 1000,
-                        borderRadius: "8px",
-                        overflow: "hidden",
-                        backgroundColor: "rgba(40, 40, 40, 0.95)", // Solid dark background
-                        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)", // Shadow for separation
-                        color: "#ffffff", // White text for Dark Mode
-                    }}
-                >
-                    <CardContent style={{ padding: 0 }}>
-                        <List style={{ margin: 0 }}>
-                            {suggestions.map((suggestion, index) => (
-                                <li
-                                    key={index}
-                                    onClick={() => handleSelect(suggestion.position)}
-                                    onMouseEnter={() => setSelectedIndex(index)}
-                                    style={{
-                                        padding: "10px",
-                                        cursor: "pointer",
-                                        backgroundColor: index === selectedIndex ? "#555" : "transparent",
-                                        color: "#ffffff",
-                                    }}
-                                >
-                                    {suggestion.display_name}
-                                </li>
-                            ))}
-                        </List>
-                    </CardContent>
-                </Card>
-            )}
-        </div>
+            {
+                suggestions.length > 0 && (
+                    <Card className="dropdown-card" >
+                        <CardContent>
+                            <List className='m-0'>
+                                {suggestions.map((suggestion, index) => (
+                                    <li
+                                        key={index}
+                                        onClick={() => handleSelect(suggestion.position)}
+                                        onMouseEnter={() => setSelectedIndex(index)}
+                                        className={`dropdown-item ${selectedIndex === index ? 'selected' : ''}`}
+                                    >
+                                        {suggestion.display_name}
+                                    </li>
+                                ))}
+                            </List>
+                        </CardContent>
+                    </Card>
+                )
+            }
+        </div >
     );
 };
 

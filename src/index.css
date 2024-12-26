@@ -68,8 +68,90 @@ h6 {
     isolation: isolate;
 }
 
+.flex {
+    display: flex;
+}
+
+.column {
+    flex-direction: column;
+}
+
+.gap-1 {
+    gap: 1rem;
+}
+
+.top-0 {
+    top: 0 !important;
+}
 
 
+.m-0 {
+    margin: 0;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.pt-0 {
+    padding-top: 0;
+}
+
+.mt-auto {
+    margin-top: auto;
+}
+
+.mt-1 {
+    margin-top: 1rem !important;
+}
+
+.relative {
+    position: relative;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.block-title {
+    margin-bottom: 0.2rem;
+    margin-top: 1rem;
+    font-size: 1.1rem;
+}
+
+.block-title .small {
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.dropdown-card {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    z-index: 1000;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: rgba(40, 40, 40, 0.95);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}
+
+.dropdown-item {
+    padding: 10px !important;
+    cursor: pointer;
+    background-color: transparent;
+    color: #ffffff;
+}
+
+.dropdown-item.selected {
+    background-color: #555;
+}
 
 .leaflet-routing-container {
     display: none;
@@ -91,11 +173,11 @@ h6 {
     width: 100%;
 }
 
-@media (min-width: 960px) {
-    :root {
-        --f7-panel-width: 400px !important;
-    }
+:root {
+    --f7-panel-width: min(100%, 400px) !important;
+}
 
+@media (min-width: 960px) {
     .hide-desktop {
         display: none;
         transform: translate3d(0, calc(-1 * var(--f7-navbar-height) - var(--f7-safe-area-top)), 0);
